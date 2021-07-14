@@ -6,20 +6,40 @@ import {
   FormControl,
   Button,
 } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const MyNav = () => {
+  const { user } = useContext(UserContext);
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">
-        <span>👾 NC Games Stop!</span>{" "}
+      <Navbar.Brand>
+        <span className="brand">👾 NC GameStop!</span>{" "}
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/reviews">Reviews</Nav.Link>
-          <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+          <Nav.Link>
+            {" "}
+            <Link to={`/`}>Home</Link>
+          </Nav.Link>
+          <Nav.Link>
+            <Link to={`/reviews`}>Reviews</Link>
+          </Nav.Link>
+          <NavDropdown
+            title={user.username ? user.username : "login"}
+            id="basic-nav-dropdown"
+          >
+            <NavDropdown.Item>
+              <Link to={`/login`}>{user.username ? "Sign out" : "Log in"}</Link>
+            </NavDropdown.Item>
+            <NavDropdown.Item>
+              <Link to={`/user/${user.username}`}>
+                Manage Account <img src={user.avatar_url} width="40px" />
+              </Link>
+            </NavDropdown.Item>
             <NavDropdown.Item href="#action/3.2">
               Another action
             </NavDropdown.Item>

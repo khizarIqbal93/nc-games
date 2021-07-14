@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react";
-import { Card, Button, CardGroup, Badge } from "react-bootstrap";
-import { getAllReviews } from "../utils/ApiReviews";
+import { Card, Button, CardGroup, Badge, Spinner } from "react-bootstrap";
+import { getAllReviews, getReviewsByCategory } from "../utils/ApiReviews";
 import { getAllCategories } from "../utils/ApiCategories";
 
 const Reviews = () => {
   const [categoryList, setCategoryList] = useState([]);
   const [currCategory, setCurrCategory] = useState("");
   const [reviewsList, setReviewsList] = useState([]);
-  useEffect(() => {
-    getAllReviews().then((reviews) => setReviewsList(reviews));
-    getAllCategories().then((categories) => setCategoryList(categories));
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    getAllCategories().then((categories) => setCategoryList(categories));
     if (currCategory === "") {
       getAllReviews().then((reviews) => setReviewsList(reviews));
+      setIsLoading(!isLoading);
     } else {
-      getAllReviews()
-        .then((reviews) =>
-          reviews.filter(({ category }) => category === currCategory)
-        )
-        .then((result) => setReviewsList(result));
+      setIsLoading(!isLoading);
+      getReviewsByCategory(currCategory).then((result) =>
+        setReviewsList(result)
+      );
+      setIsLoading(!isLoading);
     }
   }, [currCategory]);
 
@@ -30,12 +29,14 @@ const Reviews = () => {
       <label htmlFor="category">Pick a category:</label>
       <select
         name="category"
-        onChange={(event) => setCurrCategory(event.target.value)}
+        onChange={(event) => {
+          setCurrCategory(event.target.value);
+        }}
       >
         <option value="">All</option>
         {categoryList.map(({ slug }) => {
           return (
-            <option key={slug} value={slug}>
+            <option key={slug} value={slug} href={`/reviews/${currCategory}`}>
               {slug}
             </option>
           );
@@ -73,7 +74,7 @@ const Reviews = () => {
                       </Button>
                       <Button
                         variant="primary"
-                        href={`/reviews/${review_id}`}
+                        href={`/reviews/${category}/${review_id}`}
                         style={{ margin: "5px" }}
                       >
                         Check me out!

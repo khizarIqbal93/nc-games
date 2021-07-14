@@ -37,6 +37,15 @@
   padding: auto;
 }
 
-span {
+.brand {
   font-size: 36px;
+}
+
+p.card-text {
+  text-align: left;
+  border-top: black;
+}
+
+.done {
+  display: none;
 }
