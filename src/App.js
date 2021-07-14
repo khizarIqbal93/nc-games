@@ -18,7 +18,7 @@ function App() {
       <div className="App">
         <MyNav></MyNav>
         <Switch>
-          <Route path="/reviews/:category/:review_id">
+          <Route path="/reviews/:review_id">
             <ReviewPage></ReviewPage>
           </Route>
           <Route path="/user/:username">

@@ -6,11 +6,23 @@ import { getUserByUsername } from "../utils/ApiUsers";
 const Login = () => {
   const { user, setUser } = useContext(UserContext);
   const [username, setUsername] = useState("");
-  const [clicked, setClicked] = useState(false);
 
   return (
     <div>
-      {user.username ? <h1>Not {user.username}? Sign out</h1> : <h1>Log in</h1>}
+      <br></br>
+      {user.username ? (
+        <div>
+          <h3>Ahhh hey {user.username}!</h3>
+          <img src={user.avatar_url}></img>
+        </div>
+      ) : (
+        <h1>Who are you, mate?</h1>
+      )}
+      {user.username ? (
+        <h1>Not {user.username}? Enter your username</h1>
+      ) : (
+        <h1>Log in</h1>
+      )}
       <Form
         onSubmit={(event) => {
           event.preventDefault();
@@ -44,15 +56,6 @@ const Login = () => {
           Sign In
         </Button>
       </Form>
-      <br></br>
-      {user.username ? (
-        <div>
-          <h3>Ahhh hey {user.username}!</h3>
-          <img src={user.avatar_url}></img>
-        </div>
-      ) : (
-        <h1>Who are you mate?</h1>
-      )}
     </div>
   );
 };

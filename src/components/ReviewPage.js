@@ -11,7 +11,7 @@ const ReviewPage = () => {
   useEffect(() => {
     getReviewById(review_id).then((result) => setReview(result));
     getCommentsById(review_id).then((result) => setCommentList(result));
-  }, []);
+  }, [review_id]);
   return (
     <div>
       <Card>
