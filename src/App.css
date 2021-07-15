@@ -49,3 +49,10 @@ p.card-text {
 .done {
   display: none;
 }
+
+.comment-box {
+  margin: auto;
+  width: 40rem;
+  height: 3em;
+  margin-bottom: 100px;
+}

@@ -29,7 +29,7 @@ const MyNav = () => {
             <Link to={`/reviews`}>Reviews</Link>
           </Nav.Link>
           <NavDropdown
-            title={user.username ? user.username : "login"}
+            title={user.username ? user.username : "Account"}
             id="basic-nav-dropdown"
           >
             <NavDropdown.Item>

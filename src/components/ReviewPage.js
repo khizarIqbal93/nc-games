@@ -1,25 +1,30 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { useParams } from "react-router";
-import { getReviewById } from "../utils/ApiReviews";
+import { getReviewById, patchReviewLike } from "../utils/ApiReviews";
 import { getCommentsById, postComment } from "../utils/ApiComments";
-import { Card, Button, Badge } from "react-bootstrap";
+import { Card, Button, Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const ReviewPage = () => {
   const [review, setReview] = useState({});
   const [comment, setComment] = useState("");
-  const [submits, setSubmits] = useState(0);
   const { user } = useContext(UserContext);
   const [commentList, setCommentList] = useState([]);
+  const [submit, setSubmit] = useState(true);
+  const [likes, setLikes] = useState(0);
   let { review_id } = useParams();
 
   useEffect(() => {
     getReviewById(review_id).then((result) => setReview(result));
-  }, []);
+  }, [commentList]);
+
+  useEffect(() => {
+    setLikes(review.votes);
+  }, [review]);
 
   useEffect(() => {
     getCommentsById(review_id).then((result) => setCommentList(result));
-  }, [submits]);
+  }, [submit]);
 
   return (
     <div>
@@ -36,11 +41,31 @@ const ReviewPage = () => {
             {review.category}
           </Badge>
           <Card.Title>Posted by: {review.owner}</Card.Title>
-          <Card.Title>Votes: {review.votes}</Card.Title>
           <Card.Text>{review.review_body}</Card.Text>
-          <Button variant="primary" style={{ margin: "5px" }}>
-            👍
-          </Button>
+          <Card.Title>Votes: {likes}</Card.Title>
+          <OverlayTrigger
+            overlay={
+              <Tooltip id="tooltip-disabled">
+                {user.username ? "hit me to like" : "sign in first"}
+              </Tooltip>
+            }
+          >
+            <Button
+              style={{ pointerEvents: "none" }}
+              variant="primary"
+              onClick={() => {
+                if (user.username === undefined) {
+                  return "disabled";
+                } else {
+                  patchReviewLike(review_id, 1);
+                  setLikes(likes + 1);
+                }
+              }}
+              style={{ margin: "5px" }}
+            >
+              👍
+            </Button>
+          </OverlayTrigger>
           <Button variant="primary" style={{ margin: "5px" }}>
             👎
           </Button>
@@ -72,12 +97,13 @@ const ReviewPage = () => {
         className="comment"
         onSubmit={(event) => {
           event.preventDefault();
-          postComment(review_id, user.username, comment);
-          setSubmits(submits + 1);
+          postComment(review_id, user.username, comment, submit, setSubmit);
+          setComment("");
         }}
       >
         <input
           className="comment-box"
+          type="text"
           placeholder="write a comment"
           value={comment}
           onChange={(event) => {

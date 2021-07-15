@@ -17,3 +17,12 @@ export const getReviewsByCategory = (category) => {
     .get(`https://khizars-games.herokuapp.com/api/reviews?category=${category}`)
     .then((response) => response.data.reviews);
 };
+
+export const patchReviewLike = (review_id, number) => {
+  return axios
+    .patch(`https://khizars-games.herokuapp.com/api/reviews/${review_id}`, {
+      inc_votes: number,
+    })
+    .then()
+    .catch((err) => console.log(err));
+};
