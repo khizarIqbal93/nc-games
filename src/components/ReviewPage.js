@@ -1,17 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 import { useParams } from "react-router";
 import { getReviewById } from "../utils/ApiReviews";
-import { getCommentsById } from "../utils/ApiComments";
+import { getCommentsById, postComment } from "../utils/ApiComments";
 import { Card, Button, Badge } from "react-bootstrap";
 
 const ReviewPage = () => {
   const [review, setReview] = useState({});
+  const [comment, setComment] = useState("");
+  const [submits, setSubmits] = useState(0);
+  const { user } = useContext(UserContext);
   const [commentList, setCommentList] = useState([]);
   let { review_id } = useParams();
+
   useEffect(() => {
     getReviewById(review_id).then((result) => setReview(result));
+  }, []);
+
+  useEffect(() => {
     getCommentsById(review_id).then((result) => setCommentList(result));
-  }, [review_id]);
+  }, [submits]);
+
   return (
     <div>
       <Card>
@@ -59,6 +68,23 @@ const ReviewPage = () => {
           }
         )}
       </ul>
+      <form
+        className="comment"
+        onSubmit={(event) => {
+          event.preventDefault();
+          postComment(review_id, user.username, comment);
+          setSubmits(submits + 1);
+        }}
+      >
+        <input
+          className="comment-box"
+          placeholder="write a comment"
+          value={comment}
+          onChange={(event) => {
+            setComment(event.target.value);
+          }}
+        ></input>
+      </form>
     </div>
   );
 };
