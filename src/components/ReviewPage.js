@@ -3,7 +3,7 @@ import { UserContext } from "../contexts/UserContext";
 import { useParams } from "react-router";
 import { getReviewById, patchReviewLike } from "../utils/ApiReviews";
 import { getCommentsById, postComment } from "../utils/ApiComments";
-import { Card, Button, Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 
 const ReviewPage = () => {
   const [review, setReview] = useState({});
@@ -11,6 +11,7 @@ const ReviewPage = () => {
   const { user } = useContext(UserContext);
   const [commentList, setCommentList] = useState([]);
   const [submit, setSubmit] = useState(true);
+  const [newLikes, setNewLikes] = useState(0);
   const [likes, setLikes] = useState(0);
   let { review_id } = useParams();
 
@@ -43,32 +44,27 @@ const ReviewPage = () => {
           <Card.Title>Posted by: {review.owner}</Card.Title>
           <Card.Text>{review.review_body}</Card.Text>
           <Card.Title>Votes: {likes}</Card.Title>
-          <OverlayTrigger
-            overlay={
-              <Tooltip id="tooltip-disabled">
-                {user.username ? "hit me to like" : "sign in first"}
-              </Tooltip>
-            }
+          <Button
+            style={{ pointerEvents: "none" }}
+            variant="primary"
+            onClick={() => {
+              if (user.username === undefined) {
+                alert("WOAH log in first!");
+              } else if (newLikes === 0) {
+                patchReviewLike(review_id, 1);
+                setNewLikes(1);
+                setLikes(likes + 1);
+              } else if (newLikes > 0) {
+                patchReviewLike(review_id, -1);
+                setNewLikes(0);
+                setLikes(likes - 1);
+              }
+            }}
+            style={{ margin: "5px" }}
           >
-            <Button
-              style={{ pointerEvents: "none" }}
-              variant="primary"
-              onClick={() => {
-                if (user.username === undefined) {
-                  return "disabled";
-                } else {
-                  patchReviewLike(review_id, 1);
-                  setLikes(likes + 1);
-                }
-              }}
-              style={{ margin: "5px" }}
-            >
-              👍
-            </Button>
-          </OverlayTrigger>
-          <Button variant="primary" style={{ margin: "5px" }}>
-            👎
+            {newLikes === 0 ? "👍" : "👎"}
           </Button>
+
           <Button variant="primary" style={{ margin: "5px" }}>
             comments: {review.comment_count}
           </Button>
@@ -102,6 +98,7 @@ const ReviewPage = () => {
         }}
       >
         <input
+          disabled={user.username ? false : true}
           className="comment-box"
           type="text"
           placeholder="write a comment"

@@ -32,26 +32,46 @@ const Reviews = () => {
       ) : (
         <div>
           <h1>Game reviews</h1>
-          <label htmlFor="category">Pick a category:</label>
-          <select
-            name="category"
-            onChange={(event) => {
-              setCurrCategory(event.target.value);
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
             }}
           >
-            <option value="">All</option>
-            {categoryList.map(({ slug }) => {
-              return (
-                <option
-                  key={slug}
-                  value={slug}
-                  href={`/reviews/${currCategory}`}
-                >
-                  {slug}
-                </option>
-              );
-            })}
-          </select>
+            <label htmlFor="category">Pick a category:</label>
+            <select
+              name="category"
+              onChange={(event) => {
+                setCurrCategory(event.target.value);
+              }}
+            >
+              <option value="">All</option>
+              {categoryList.map(({ slug }) => {
+                return (
+                  <option
+                    key={slug}
+                    value={slug}
+                    href={`/reviews/${currCategory}`}
+                  >
+                    {slug}
+                  </option>
+                );
+              })}
+            </select>
+            <label htmlFor="sort_by">Sort by</label>
+            <select name="sort_by">
+              <option value="title">title</option>
+              <option value="created_at">date</option>
+              <option value="votes">votes</option>
+              <option value="comment_count">comments</option>
+            </select>
+            <label htmlFor="order">Order</label>
+            <select name="order">
+              <option>ascending</option>
+              <option>descending</option>
+            </select>
+            <label>Search a review</label>
+            <input placeholder="search"></input>
+          </form>
           <ul className="reviews-cards">
             <CardGroup id="review-cards">
               {reviewsList.map(
